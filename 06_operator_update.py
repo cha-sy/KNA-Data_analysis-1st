@@ -114,3 +114,66 @@ num2 = 456
 print(num1 >= num2)  # False
 # print(num1 >= "num2")  # TypeError 발생
 # TypeError : '>=' not supported between instances of 'int' and 'str'
+
+# ===============================
+
+# and / or / not -논리연산자
+# and: 둘 다 True여야 True를 반환
+print(5 == 5 and 7 == 7)  # True + True = True
+# and는 첫 번째 조건이 False라면 뒤에 조건은 확인 안함
+print(5 == 7 and 7 == 7)  # False + True = False
+print(7 != 7 and 5 == 5)  # True + False = False
+# 위 코드는 가능하다면 7 != 7 and 5 == 5 순서로 작성
+
+# or: 하나라도 True라면 True 반환
+print(5 == 5 and 7 == 7)  # True + True = True
+print(5 == 7 and 7 == 7)  # False + True = True
+# or는 첫 번째 조건이 True라면 뒤에 조건은 확인 안함
+print(5 == 5 and 7 != 7)  # True + False = True
+
+# not: 값을 반대로 뒤집어 줌
+print(not True)  # False
+print(not 5 == 5)  # False
+# 5 == 5를 연산하여 True를 반환
+# not True로 동작해서 False 반환
+# 반환받은 False라는 값을 print가 터미널로 출력
+
+print("===== 실습 =====")
+
+# 실습4 비교연산출력
+print(11 == 11)  # True
+print(11 > 21)  # False
+print(11 < 21)  # True
+print(11 >= 11)  # True
+print(11 <= 11)  # True
+print(11 != 11)  # False
+
+# 실습5 정상범위, 다중센서 판정, 실전
+temp = 85
+temp_ok = 60 <= temp and temp <= 90
+print(temp_ok)  # True
+press = 5
+pres_ok = 3 <= press and press <= 7
+print(pres_ok)  # True
+print(temp_ok and pres_ok)  # True
+
+# 실습5 복합할당으로재고추적 · 기초 실습
+x = 100
+x += 50
+print(x)  # 150
+print(x)  # 120
+x += 5
+print(x)  # 125
+
+# 실습6 설비지표계산 실전
+tot = 500
+def1 = 23
+print(def1 / tot * 100)  # 4.6
+run_h = 21
+all_h = 24
+print(run_h / all_h * 100)  # 87.5
+
+# 실습7
+min = 500
+print(min // 60)  # 8시간
+print(min % 60)  # 20분
