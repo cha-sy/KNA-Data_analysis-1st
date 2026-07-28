@@ -626,3 +626,48 @@ status = parts[1].strip().lower()
 print(status)
 
 # 실습 f-string으로 변수 끼워 출력하기
+
+name = "PUMP_A"
+temp = 87
+print(f"설비 {name}, 온도 {temp}도")
+
+# ============================================
+print("=== f-string ===")
+
+name = "PUMP_A"
+temp = 36
+
+# 출려 결과: 설비 PUMP_A, 온도 36도
+# 기존 방식
+# print("설비" + name + ", 온도 " + str(temp))
+
+# f-string
+print(f"설비 {name}, 온도 {temp}도")
+# 따옴표 밖에 f 작성하기
+# 변수명은 꼭 {중괄호}에 감싸기
+
+# f-string 연산
+hour = 8
+
+# 우리는 하루에 8시간 수업을 듣고, 이는 480분입니다.
+print(f"우리는 하루에 {hour}시간 수업을 듣고, 이는 {hour *60}분입니다.")
+
+# 실습2. f-string 안에서 계산하기
+a = 45
+b = 87
+c = 96
+print(f"평균 {(a + b + c) / 3}")  # 평균 76.0
+
+# 실습 3 소수점 자릿수 지정하기
+min = 67.986
+print(f"{min:.1f}")  # 68.0 (소수점 1자리, 반올림)
+print(f"{min:.2f}")  # 67.99 (소수점 2자리)
+
+# 실습 4 센서 로그 한 줄 정리 리포트 만들기
+raw = " 5 , sensor_2 , WARNING , 0.78912 "
+parts = raw.strip().split(",")  # 앞뒤 공백 제거 후 쉼표로 분리
+sid = parts[1].strip()  # sensor_2
+status = parts[2].strip().lower()  # warning
+value = float(parts[3].strip())  # 0.78912
+print(f"[센서 {sid}] 상태 {status}, 측정값 {value:.2f}") #[센서 sensor_2] 상태 warning, 측정값 0.79
+
