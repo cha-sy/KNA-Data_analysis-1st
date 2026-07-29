@@ -302,3 +302,8 @@ temps.reverse()
 print(temps)  # [30, 28, 27, 26, 24, 24, 22]
 print(temps.count(24))  # 2
 print(temps.index(24))  # 4
+
+
+
+
+    
