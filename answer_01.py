@@ -36,81 +36,66 @@ sensors = [
 # 도전) 위험 1대라도 있으면 "⚠ 즉시 점검 요망", 없으면 "✅ 전 설비 안정"
 
 # ===========================================================================
-                        # 설비 종합 모니터링 리포트
+# 설비 종합 모니터링 리포트
 # ============================================================================
 normal_count = 0
-caution_count = 0
+warning_count = 0
 danger_count = 0
 
-# 평균 온도를 구하기 위한 누적변수
+danger_list = []
+
 total_temp = 0
 
-# 위험 설비 이름을 저장할 리스트
-danger_names = []
-
-# 가장 높은 온도를 찾기 위한 초기값
 max_name = sensors[0][0]
 max_temp = sensors[0][1]
 
+print("🏭 === 설비 모니터링 리포트 ===")
 
-# 1. 각 설비 상태 판정 + 번호 출력
-for i, (name, temp, vibration) in enumerate(sensors, start=1):
+for i, sensor in enumerate(sensors, 1):
+    name, temp, vibration = sensor
 
-    # 온도 > 90 또는 진동 > 5.0이면 위험
+    # 상태 판정
     if temp > 90 or vibration > 5.0:
-        status = "위험"
+        state = "🚨 위험"
         danger_count += 1
+        danger_list.append(name)
 
-        # 위험 설비 이름 저장
-        danger_names.append(name)
-
-    # 온도 >= 80 또는 진동 >= 3.0이면 주의
     elif temp >= 80 or vibration >= 3.0:
-        status = "주의"
-        caution_count += 1
+        state = "⚠️ 주의"
+        warning_count += 1
 
-    # 그 외는 정상
     else:
-        status = "정상"
+        state = "✅ 정상"
         normal_count += 1
 
-    # 온도 누적
+    # 온도 합계
     total_temp += temp
 
-    # 가장 높은 온도 직접 찾기
+    # 최고 온도 설비 찾기
     if temp > max_temp:
         max_temp = temp
         max_name = name
 
-    # 한 줄 출력
-    print(f"{i}. {name} - 온도: {temp}°C, 진동: {vibration}, 상태: {status}")
+    print(f"{i}. {name} | 온도: {temp}℃ | 진동: {vibration} | 상태: {state}")
 
 
-# 2. 정상 / 주의 / 위험 개수 출력
+# 이상 설비 비율
+abnormal_count = warning_count + danger_count
+abnormal_rate = abnormal_count / len(sensors) * 100
+
+# 평균 온도
+average_temp = total_temp / len(sensors)
+
+# 위험 설비 정렬
+danger_list.sort()
+
+
 print()
-print(f"정상: {normal_count}대")
-print(f"주의: {caution_count}대")
-print(f"위험: {danger_count}대")
-
-
-# 3. 이상 설비 비율
-abnormal_count = caution_count + danger_count
-abnormal_rate = round(abnormal_count / len(sensors) * 100, 1)
-
-print(f"이상 설비 비율: {abnormal_rate}%")
-
-
-# 4. 전체 평균 온도
-average_temp = round(total_temp / len(sensors), 1)
-
-print(f"전체 평균 온도: {average_temp}°C")
-
-
-# 5. 온도가 가장 높은 설비
-print(f"최고 온도 설비: {max_name}, 온도: {max_temp}°C")
-
-
-# 6. 위험 설비 이름 정렬
-danger_names.sort()
-
-print(f"위험 설비: {danger_names}")
+print(" === 분석 결과 ===")
+print(f"✅ 정상 설비: {normal_count}대")
+print(f"⚠️ 주의 설비: {warning_count}대")
+print(f"🚨 위험 설비: {danger_count}대")
+print(f" 이상 설비 비율: {abnormal_rate:.1f}%")
+print(f" 전체 평균 온도: {average_temp:.1f}℃")
+print(f" 최고 온도 설비: {max_name} ({max_temp}℃)")
+print(f"🚨 위험 설비 목록: {danger_list}")
