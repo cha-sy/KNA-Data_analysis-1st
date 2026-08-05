@@ -34,3 +34,5 @@ print(math.sqrt(fake_reading))  # 그 값의 제곱근
 # file_count = len(os.listdir(practice_dir))
 # check_time = datetime.datetime.now()
 # print(f"파일 {file_count}개, 점검 시각 {check_time}")
+
+
