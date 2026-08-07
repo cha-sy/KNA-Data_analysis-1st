@@ -8,7 +8,7 @@
 
 import os
 import sys
-
+import csv
 
 # 0. 미리 전체 합산 점수 낼 준비를 한다
 total_all = 0
