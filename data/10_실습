@@ -1,0 +1,177 @@
+# 실습 1 finally로 파일 안전하게 닫기
+
+file = None
+
+try:
+    file = open("test.txt", "r", encoding="utf-8")
+
+    print(file.read())
+
+    print(10 / 0)
+
+except Exception as e:
+    print("오류 발생:", e)
+
+finally:
+    if file:
+        file.close()
+        print("파일이 안전하게 닫혔습니다.")
+
+# [실습 2] 반복문에서 불량 줄 건너뛰기
+sensor_data = [
+    23.5,
+    45.8,
+    12.3,
+    "영크크",
+    67.9,
+    88.1,
+    15.6,
+    39.4,
+    72.8,
+    "영크크",
+    91.2,
+    10.5,
+    54.7,
+    31.9,
+    48.6,
+    "영크크",
+    77.3,
+    29.8,
+    63.1,
+    18.4,
+    95.7,
+    41.2,
+    56.9,
+]
+
+print("=== 정상 데이터만 출력 ===")
+
+for data in sensor_data:
+    if type(data) == str:
+        print(f"불량 데이터 발견: {data} → 건너뜀")
+        continue
+
+    print(f"측정값: {data}")
+
+# [실습 3] 여러 파일 묶어 처리하기
+file_names = ["08_string.csv", "09_input.csv", "09_ict_dirty.csv"]
+
+for file_name in file_names:
+    print(f"\n===== {file_name} =====")
+
+    try:
+        with open(file_name, "r", encoding="utf-8") as file:
+            print(file.read())
+
+    except FileNotFoundError:
+        print(f"{file_name} 파일을 찾을 수 없습니다.")
+
+# ==================================================
+print("=== 종합실습 ===")
+# 종합실습 1. -1단계 csv 읽기
+import os
+import csv
+
+dirty_csv_path = os.path.join("data", "09_ict_inspection_dirty.csv")
+
+
+def read_ict_csv(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            rows = []
+            for row in reader:
+                if len(row) > 0:
+                    rows.append(row)
+            return header, rows
+    except FileNotFoundError:
+        print(f"파일을 찾을 수 없습니다: {path}")
+        return [], []
+
+
+header, rows = read_ict_csv(dirty_csv_path)
+print(
+    header
+)  # ['검사ID', '부품명', '측정값', '기준값', '상한치', '하한치', '검사결과']
+print(len(rows))
+
+missing_header, missing_rows = read_ict_csv(os.path.join("data", "09_없는파일.csv"))
+print(missing_header, missing_rows)  # [] [] - 파일이 없어도 프로그램은 멈추지 않음
+
+
+# 종합실습 2. 2단계 조건분류
+def group_rows_by_category(rows, category_index=0):
+    # """
+    # 지정한 인덱스(기본값: 0번째 열, 부품/설비명)를 기준 키(Key)로 삼아
+    # 데이터를 그룹별 딕셔너리로 분류합니다.
+    # """
+    grouped_data = {}
+    for row in rows:
+        if not row:
+            continue
+        category = row[category_index].strip()
+        if category not in grouped_data:
+            grouped_data[category] = []
+        grouped_data[category].append(row)
+
+    print(
+        f"[STEP 2 성공] 총 {len(grouped_data)}개 카테고리/설비로 분류 완료 ({', '.join(grouped_data.keys())})"
+    )
+    return grouped_data
+
+
+# 종합실습 3. 통계함수
+def calc_stats(values):
+    numbers = []
+    for v in values:
+        try:
+            numbers.append(float(v))
+        except ValueError:
+            continue
+    if len(numbers) == 0:
+        return None
+    count = len(numbers)
+    average = sum(numbers) / count
+    return {
+        "count": count,
+        "average": average,
+        "min": min(numbers),
+        "max": max(numbers),
+    }
+
+
+sample_stats = calc_stats(["0.0", "2939.61", "결측", "4366.23"])
+print(sample_stats)  # {'count': 3, 'average': 2435.28, 'min': 0.0, 'max': 4366.23}
+
+empty_stats = calc_stats(["결측", ""])
+print(empty_stats)
+
+
+# 종합실습 4. 불량방어
+def check_measurement_range(value, lower, upper):
+    if value < lower or value > upper:
+        raise ValueError(f"허용범위({lower}~{upper}) 밖의 값: {value}")
+    return value
+
+
+def defend_measurement(rows):
+    valid_rows = []
+    bad_log = []
+    for i, row in enumerate(rows):
+        try:
+            value = float(row[2])
+            upper = float(row[4])
+            lower = float(row[5])
+            check_measurement_range(value, lower, upper)
+        except (ValueError, IndexError) as e:
+            bad_log.append((i, str(e)))
+            continue
+        valid_rows.append(row)
+    return valid_rows, bad_log
+
+
+valid_rows, bad_log = defend_measurement(rows)
+print(len(valid_rows))
+for entry in bad_log:
+    print(entry)
